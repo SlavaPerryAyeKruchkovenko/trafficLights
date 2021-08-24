@@ -1,0 +1,410 @@
+
+PCP.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000001aa  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  0000021e  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000002  00800060  00800060  0000021e  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  0000021e  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000250  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000058  00000000  00000000  0000028c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   00000777  00000000  00000000  000002e4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 0000055e  00000000  00000000  00000a5b  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   0000032f  00000000  00000000  00000fb9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  000000a8  00000000  00000000  000012e8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    000002fa  00000000  00000000  00001390  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    0000006e  00000000  00000000  0000168a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 00000048  00000000  00000000  000016f8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	21 c0       	rjmp	.+66     	; 0x46 <__bad_interrupt>
+   4:	20 c0       	rjmp	.+64     	; 0x46 <__bad_interrupt>
+   6:	1f c0       	rjmp	.+62     	; 0x46 <__bad_interrupt>
+   8:	1e c0       	rjmp	.+60     	; 0x46 <__bad_interrupt>
+   a:	1d c0       	rjmp	.+58     	; 0x46 <__bad_interrupt>
+   c:	1c c0       	rjmp	.+56     	; 0x46 <__bad_interrupt>
+   e:	1b c0       	rjmp	.+54     	; 0x46 <__bad_interrupt>
+  10:	1b c0       	rjmp	.+54     	; 0x48 <__vector_8>
+  12:	19 c0       	rjmp	.+50     	; 0x46 <__bad_interrupt>
+  14:	18 c0       	rjmp	.+48     	; 0x46 <__bad_interrupt>
+  16:	17 c0       	rjmp	.+46     	; 0x46 <__bad_interrupt>
+  18:	16 c0       	rjmp	.+44     	; 0x46 <__bad_interrupt>
+  1a:	15 c0       	rjmp	.+42     	; 0x46 <__bad_interrupt>
+  1c:	14 c0       	rjmp	.+40     	; 0x46 <__bad_interrupt>
+  1e:	13 c0       	rjmp	.+38     	; 0x46 <__bad_interrupt>
+  20:	12 c0       	rjmp	.+36     	; 0x46 <__bad_interrupt>
+  22:	11 c0       	rjmp	.+34     	; 0x46 <__bad_interrupt>
+  24:	10 c0       	rjmp	.+32     	; 0x46 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_clear_bss>:
+  32:	20 e0       	ldi	r18, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	01 c0       	rjmp	.+2      	; 0x3c <.do_clear_bss_start>
+
+0000003a <.do_clear_bss_loop>:
+  3a:	1d 92       	st	X+, r1
+
+0000003c <.do_clear_bss_start>:
+  3c:	a2 36       	cpi	r26, 0x62	; 98
+  3e:	b2 07       	cpc	r27, r18
+  40:	e1 f7       	brne	.-8      	; 0x3a <.do_clear_bss_loop>
+  42:	44 d0       	rcall	.+136    	; 0xcc <main>
+  44:	b0 c0       	rjmp	.+352    	; 0x1a6 <_exit>
+
+00000046 <__bad_interrupt>:
+  46:	dc cf       	rjmp	.-72     	; 0x0 <__vectors>
+
+00000048 <__vector_8>:
+#define LED PORTC
+#define BTN PORTD 
+	
+int count =	0;
+ISR(TIMER1_OVF_vect)
+{
+  48:	1f 92       	push	r1
+  4a:	0f 92       	push	r0
+  4c:	0f b6       	in	r0, 0x3f	; 63
+  4e:	0f 92       	push	r0
+  50:	11 24       	eor	r1, r1
+  52:	8f 93       	push	r24
+  54:	9f 93       	push	r25
+	TCCR1B = 0b00000000;
+  56:	1e bc       	out	0x2e, r1	; 46
+	count++;
+  58:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+  5c:	90 91 61 00 	lds	r25, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+  60:	01 96       	adiw	r24, 0x01	; 1
+  62:	90 93 61 00 	sts	0x0061, r25	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+  66:	80 93 60 00 	sts	0x0060, r24	; 0x800060 <__DATA_REGION_ORIGIN__>
+	TCCR1B = 0b00000011;
+  6a:	83 e0       	ldi	r24, 0x03	; 3
+  6c:	8e bd       	out	0x2e, r24	; 46
+	TCNT1=49536;
+  6e:	80 e8       	ldi	r24, 0x80	; 128
+  70:	91 ec       	ldi	r25, 0xC1	; 193
+  72:	9d bd       	out	0x2d, r25	; 45
+  74:	8c bd       	out	0x2c, r24	; 44
+}
+  76:	9f 91       	pop	r25
+  78:	8f 91       	pop	r24
+  7a:	0f 90       	pop	r0
+  7c:	0f be       	out	0x3f, r0	; 63
+  7e:	0f 90       	pop	r0
+  80:	1f 90       	pop	r1
+  82:	18 95       	reti
+
+00000084 <GlowFirstLight>:
+	}  	  
+  }while(1);
+}
+void GlowFirstLight(void)
+{
+	LED = 0b0000001;		
+  84:	81 e0       	ldi	r24, 0x01	; 1
+  86:	85 bb       	out	0x15, r24	; 21
+  88:	08 95       	ret
+
+0000008a <GlowSecondLight>:
+}
+void GlowSecondLight(void)
+{
+	LED = 0b0000010;
+  8a:	82 e0       	ldi	r24, 0x02	; 2
+  8c:	85 bb       	out	0x15, r24	; 21
+  8e:	08 95       	ret
+
+00000090 <GlowThirtLight>:
+}
+void GlowThirtLight(void)
+{
+	LED = 0b0000100;
+  90:	84 e0       	ldi	r24, 0x04	; 4
+  92:	85 bb       	out	0x15, r24	; 21
+  94:	08 95       	ret
+
+00000096 <GlowAllLight>:
+}
+void GlowAllLight(void)
+{
+	LED = 0b0000111;
+  96:	87 e0       	ldi	r24, 0x07	; 7
+  98:	85 bb       	out	0x15, r24	; 21
+  9a:	08 95       	ret
+
+0000009c <OffLights>:
+}
+void OffLights(void)
+{
+	LED = 0;
+  9c:	15 ba       	out	0x15, r1	; 21
+  9e:	08 95       	ret
+
+000000a0 <TraficBroke>:
+}
+void TraficBroke(void)
+{
+	while(count<1)
+  a0:	01 c0       	rjmp	.+2      	; 0xa4 <TraficBroke+0x4>
+	{
+		GlowSecondLight();
+  a2:	f3 df       	rcall	.-26     	; 0x8a <GlowSecondLight>
+{
+	LED = 0;
+}
+void TraficBroke(void)
+{
+	while(count<1)
+  a4:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+  a8:	90 91 61 00 	lds	r25, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+  ac:	18 16       	cp	r1, r24
+  ae:	19 06       	cpc	r1, r25
+  b0:	c4 f7       	brge	.-16     	; 0xa2 <TraficBroke+0x2>
+  b2:	01 c0       	rjmp	.+2      	; 0xb6 <TraficBroke+0x16>
+	{
+		GlowSecondLight();
+	}
+	while(count <2)
+	{
+		OffLights();
+  b4:	f3 df       	rcall	.-26     	; 0x9c <OffLights>
+{
+	while(count<1)
+	{
+		GlowSecondLight();
+	}
+	while(count <2)
+  b6:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+  ba:	90 91 61 00 	lds	r25, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+  be:	02 97       	sbiw	r24, 0x02	; 2
+  c0:	cc f3       	brlt	.-14     	; 0xb4 <TraficBroke+0x14>
+	{
+		OffLights();
+	}
+	count = 0;
+  c2:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+  c6:	10 92 60 00 	sts	0x0060, r1	; 0x800060 <__DATA_REGION_ORIGIN__>
+  ca:	08 95       	ret
+
+000000cc <main>:
+	TCNT1=49536;
+}
+
+int main(void)
+{
+	TCCR1B = 0b00000011;
+  cc:	83 e0       	ldi	r24, 0x03	; 3
+  ce:	8e bd       	out	0x2e, r24	; 46
+	DDRD = 0b0000000;
+  d0:	11 ba       	out	0x11, r1	; 17
+	DDRC = 0b0000111;
+  d2:	87 e0       	ldi	r24, 0x07	; 7
+  d4:	84 bb       	out	0x14, r24	; 20
+	BTN = 0b11111111; 
+  d6:	8f ef       	ldi	r24, 0xFF	; 255
+  d8:	82 bb       	out	0x12, r24	; 18
+	TIMSK = 0b00000100;
+  da:	84 e0       	ldi	r24, 0x04	; 4
+  dc:	89 bf       	out	0x39, r24	; 57
+	SREG = 0b10000000;
+  de:	80 e8       	ldi	r24, 0x80	; 128
+  e0:	8f bf       	out	0x3f, r24	; 63
+  do
+  {	  
+	TCNT1=49536;
+  e2:	80 e8       	ldi	r24, 0x80	; 128
+  e4:	91 ec       	ldi	r25, 0xC1	; 193
+  e6:	9d bd       	out	0x2d, r25	; 45
+  e8:	8c bd       	out	0x2c, r24	; 44
+	if(PIND == 0b11111011 )
+  ea:	80 b3       	in	r24, 0x10	; 16
+  ec:	8b 3f       	cpi	r24, 0xFB	; 251
+  ee:	99 f5       	brne	.+102    	; 0x156 <main+0x8a>
+  f0:	01 c0       	rjmp	.+2      	; 0xf4 <main+0x28>
+	{		
+		while(count <50)
+		{
+			GlowFirstLight();			
+  f2:	c8 df       	rcall	.-112    	; 0x84 <GlowFirstLight>
+  do
+  {	  
+	TCNT1=49536;
+	if(PIND == 0b11111011 )
+	{		
+		while(count <50)
+  f4:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+  f8:	90 91 61 00 	lds	r25, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+  fc:	c2 97       	sbiw	r24, 0x32	; 50
+  fe:	cc f3       	brlt	.-14     	; 0xf2 <main+0x26>
+ 100:	01 c0       	rjmp	.+2      	; 0x104 <main+0x38>
+		{
+			GlowFirstLight();			
+		}
+		while(count <55)	 
+		{
+			GlowSecondLight();
+ 102:	c3 df       	rcall	.-122    	; 0x8a <GlowSecondLight>
+	{		
+		while(count <50)
+		{
+			GlowFirstLight();			
+		}
+		while(count <55)	 
+ 104:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 108:	90 91 61 00 	lds	r25, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 10c:	c7 97       	sbiw	r24, 0x37	; 55
+ 10e:	cc f3       	brlt	.-14     	; 0x102 <main+0x36>
+ 110:	0c c0       	rjmp	.+24     	; 0x12a <main+0x5e>
+			GlowSecondLight();
+		}
+		while(count <60)
+		{
+			int num = count;
+			count = 0;
+ 112:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 116:	10 92 60 00 	sts	0x0060, r1	; 0x800060 <__DATA_REGION_ORIGIN__>
+			TraficBroke(count);
+ 11a:	80 e0       	ldi	r24, 0x00	; 0
+ 11c:	90 e0       	ldi	r25, 0x00	; 0
+ 11e:	c0 df       	rcall	.-128    	; 0xa0 <TraficBroke>
+			count = num+2;
+ 120:	22 96       	adiw	r28, 0x02	; 2
+ 122:	d0 93 61 00 	sts	0x0061, r29	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 126:	c0 93 60 00 	sts	0x0060, r28	; 0x800060 <__DATA_REGION_ORIGIN__>
+		}
+		while(count <55)	 
+		{
+			GlowSecondLight();
+		}
+		while(count <60)
+ 12a:	c0 91 60 00 	lds	r28, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 12e:	d0 91 61 00 	lds	r29, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 132:	cc 33       	cpi	r28, 0x3C	; 60
+ 134:	d1 05       	cpc	r29, r1
+ 136:	6c f3       	brlt	.-38     	; 0x112 <main+0x46>
+ 138:	01 c0       	rjmp	.+2      	; 0x13c <main+0x70>
+			TraficBroke(count);
+			count = num+2;
+		}
+		while(count <100)
+		{
+			GlowThirtLight();
+ 13a:	aa df       	rcall	.-172    	; 0x90 <GlowThirtLight>
+			int num = count;
+			count = 0;
+			TraficBroke(count);
+			count = num+2;
+		}
+		while(count <100)
+ 13c:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 140:	90 91 61 00 	lds	r25, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 144:	84 36       	cpi	r24, 0x64	; 100
+ 146:	91 05       	cpc	r25, r1
+ 148:	c4 f3       	brlt	.-16     	; 0x13a <main+0x6e>
+		{
+			GlowThirtLight();
+		}
+		OffLights();
+ 14a:	a8 df       	rcall	.-176    	; 0x9c <OffLights>
+		count = 0;
+ 14c:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 150:	10 92 60 00 	sts	0x0060, r1	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 154:	c6 cf       	rjmp	.-116    	; 0xe2 <main+0x16>
+	}
+	else if(PIND == 0b11110111)
+ 156:	80 b3       	in	r24, 0x10	; 16
+ 158:	87 3f       	cpi	r24, 0xF7	; 247
+ 15a:	b1 f4       	brne	.+44     	; 0x188 <main+0xbc>
+ 15c:	01 c0       	rjmp	.+2      	; 0x160 <main+0x94>
+	{
+		while(count<1)
+		{
+			GlowAllLight();
+ 15e:	9b df       	rcall	.-202    	; 0x96 <GlowAllLight>
+		OffLights();
+		count = 0;
+	}
+	else if(PIND == 0b11110111)
+	{
+		while(count<1)
+ 160:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 164:	90 91 61 00 	lds	r25, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 168:	18 16       	cp	r1, r24
+ 16a:	19 06       	cpc	r1, r25
+ 16c:	c4 f7       	brge	.-16     	; 0x15e <main+0x92>
+ 16e:	01 c0       	rjmp	.+2      	; 0x172 <main+0xa6>
+		{
+			GlowAllLight();
+		}
+		while(count <2)
+		{
+			OffLights();
+ 170:	95 df       	rcall	.-214    	; 0x9c <OffLights>
+	{
+		while(count<1)
+		{
+			GlowAllLight();
+		}
+		while(count <2)
+ 172:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 176:	90 91 61 00 	lds	r25, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 17a:	02 97       	sbiw	r24, 0x02	; 2
+ 17c:	cc f3       	brlt	.-14     	; 0x170 <main+0xa4>
+		{
+			OffLights();
+		}
+		count = 0;
+ 17e:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 182:	10 92 60 00 	sts	0x0060, r1	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 186:	ad cf       	rjmp	.-166    	; 0xe2 <main+0x16>
+	}
+	else if(PIND == 0b11101111)
+ 188:	80 b3       	in	r24, 0x10	; 16
+ 18a:	8f 3e       	cpi	r24, 0xEF	; 239
+ 18c:	31 f4       	brne	.+12     	; 0x19a <main+0xce>
+	{
+		TraficBroke(count);
+ 18e:	80 91 60 00 	lds	r24, 0x0060	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 192:	90 91 61 00 	lds	r25, 0x0061	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 196:	84 df       	rcall	.-248    	; 0xa0 <TraficBroke>
+ 198:	a4 cf       	rjmp	.-184    	; 0xe2 <main+0x16>
+	}
+	else
+	{
+		OffLights();
+ 19a:	80 df       	rcall	.-256    	; 0x9c <OffLights>
+		count = 0;
+ 19c:	10 92 61 00 	sts	0x0061, r1	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
+ 1a0:	10 92 60 00 	sts	0x0060, r1	; 0x800060 <__DATA_REGION_ORIGIN__>
+ 1a4:	9e cf       	rjmp	.-196    	; 0xe2 <main+0x16>
+
+000001a6 <_exit>:
+ 1a6:	f8 94       	cli
+
+000001a8 <__stop_program>:
+ 1a8:	ff cf       	rjmp	.-2      	; 0x1a8 <__stop_program>
